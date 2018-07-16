@@ -3,7 +3,7 @@
 #endif
 
 #define BUTTON
-#define BUTTON1
+#define BUTTON4
 
 
 #define F_CPU 20000000UL
@@ -42,10 +42,22 @@ int main(void)
 	DDRB |= _BV(MOSI);
 	DDRB |= _BV(SCK);
 	DDRB |= _BV(SS);
+	PORTB |= _BV(INPUT);
 
 #ifdef BUTTON1
 	read(&data.cd.button1);
 #endif // BUTTON1
+#ifdef BUTTON2
+	read(&data.cd.button2);
+#endif // BUTTON2
+#ifdef BUTTON3
+	read(&data.cd.button3);
+#endif // BUTTON3
+#ifdef BUTTON4
+	read(&data.cd.button4);
+#endif // BUTTON3
+
+
 
 
 	int i;
@@ -55,12 +67,13 @@ int main(void)
 	for (i = 0; i <= s; i++) {
 		data_out(data.byte[i]);
 	}
+	PORTB = 0;
 	return 0;
 }
 
 void read(uint8_t *val) {
 #ifdef BUTTON
-	*val = 0xff;// (PINB & _BV(INPUT)) ^ 1;
+	*val = ((PINB & _BV(INPUT)) >> INPUT) ^ 1;
 #endif // BUTTON
 }
 
@@ -77,8 +90,8 @@ void data_out(uint8_t datain) //Data Output Serial Interface
 		else
 			PORTB &= ~_BV(MOSI);
 		datain <<= 1;
-		_delay_ms(50);
+		_delay_ms(1);
 		PORTB |= _BV(SCK); //SCL = 1;
-		_delay_ms(50);
+		_delay_ms(1);
 	}
 }

@@ -1,8 +1,9 @@
 #include <SPI.h>
 
 #define B1 9
+#define B2 8
 
-#define INPUTSSIZE 1
+#define INPUTSSIZE 2
 
 void getData(int);
 
@@ -23,7 +24,7 @@ union Data {
 
 union Data data;
 int sizestruct = sizeof(struct controldata);
-int inputs[INPUTSSIZE] = {B1};
+int inputs[INPUTSSIZE] = {B1, B2};
 volatile int pos;
  
  void setup() {
@@ -35,6 +36,8 @@ volatile int pos;
   pinMode(MISO, OUTPUT);
   pinMode(B1, OUTPUT);
   digitalWrite(B1, LOW);
+  pinMode(B2, OUTPUT);
+  digitalWrite(B2, LOW);
 
   SPCR = (1 << SPE);
 
@@ -43,13 +46,13 @@ volatile int pos;
 }
 
 ISR (SPI_STC_vect){
-  Serial.println("in isr");
+  //Serial.println("in isr");
   byte c = SPDR;
-  Serial.println(c);
+  //Serial.println(c);
 
   data.byte[pos] |= c;
   pos++;
-  Serial.println(pos);
+  //Serial.println(pos);
   }
   
 void loop() {
@@ -58,18 +61,23 @@ void loop() {
     for (i = 0; i < INPUTSSIZE; i++){
       getData(inputs[i]);
       }
-    Serial.println(data.byte[0]);
-    delay(10);
+    
+    Serial.print(data.byte[0]);
+    Serial.println(data.byte[1]);
+    delay(1);
 }
 
 void getData(int port){
   pos = 0;
   digitalWrite(port, HIGH);
-  Serial.println("gothigh");
+  //Serial.println("gothigh");
   while (pos < sizestruct){
+      delay(10);
+      pos = sizestruct;
     }
+    
   digitalWrite(port, LOW);
-  Serial.println("golow");
-  Serial.println(data.cd.button1);
+  //Serial.println("golow");
+  //Serial.println(data.cd.button1);
   }
 
