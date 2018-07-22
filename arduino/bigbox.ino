@@ -1,9 +1,16 @@
+//#define DEBUG
+
 #include <SPI.h>
 
-#define B1 9
-#define B2 8
+// code input pins
+#define P1 9
+#define P2 8
+#define P3 7
+#define P4 6
+#define P5 5
+#define P6 4
 
-#define INPUTSSIZE 2
+#define INPUTSIZE 6
 
 void getData(int);
 
@@ -24,20 +31,22 @@ union Data {
 
 union Data data;
 int sizestruct = sizeof(struct controldata);
-int inputs[INPUTSSIZE] = {B1, B2};
+int inputs[INPUTSIZE] = {P1, P2, P3, P4, P5, P6};
 volatile int pos;
  
  void setup() {
-  // put your setup code here, to run once:
+#ifdef DEBUG
   Serial.begin(115200);
   Serial.println("test\n");
+#endif
   pinMode(SCK, INPUT);
   pinMode(MOSI, INPUT);
   pinMode(MISO, OUTPUT);
-  pinMode(B1, OUTPUT);
-  digitalWrite(B1, LOW);
-  pinMode(B2, OUTPUT);
-  digitalWrite(B2, LOW);
+  int i;
+  for (i = 0; i < INPUTSIZE; i++){
+    pinMode(inputs[i], OUTPUT);
+    digitalWrite(inputs[i], LOW);
+  }
 
   SPCR = (1 << SPE);
 
@@ -46,35 +55,43 @@ volatile int pos;
 }
 
 ISR (SPI_STC_vect){
-  //Serial.println("in isr");
   byte c = SPDR;
-  //Serial.println(c);
-
+#ifdef DEBUG
+  Serial.println("in isr");
+  Serial.println(c);
+  Serial.println(pos);
+#endif
   data.byte[pos] |= c;
   pos++;
-  //Serial.println(pos);
   }
   
 void loop() {
     memset(data.byte, 0, sizestruct);
     int i;
-    for (i = 0; i < INPUTSSIZE; i++){
+    for (i = 0; i < INPUTSIZE; i++){
       getData(inputs[i]);
       }
-    
+    // Your data is ready now.
+    // Can output to PC
+#ifdef DEBUG
     Serial.print(data.byte[0]);
     Serial.println(data.byte[1]);
     delay(1);
+#endif
 }
 
 void getData(int port){
   pos = 0;
   digitalWrite(port, HIGH);
-  //Serial.println("gothigh");
+  int i = 0;
   while (pos < sizestruct){
       delay(10);
-      pos = sizestruct;
-    }
+      i++;
+      if (pos == 0 || i > sizestruct){ // Timeout on response
+        pos = sizestruct;
+      }
+      
+  }
     
   digitalWrite(port, LOW);
   //Serial.println("golow");
