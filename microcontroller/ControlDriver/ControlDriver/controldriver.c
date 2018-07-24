@@ -5,8 +5,7 @@
 #define BUTTON
 #define BUTTON4
 
-
-#define F_CPU 20000000UL
+#define F_CPU 1000000UL
 
 #define LED PINB4
 #define INPUT PINB3
@@ -64,7 +63,7 @@ int main(void)
 	int s = sizeof(struct controldata);
 	PORTB |= _BV(SS);
 	PORTB &= ~_BV(SS);
-	for (i = 0; i <= s; i++) {
+	for (i = 0; i < s; i++) {
 		data_out(data.byte[i]);
 	}
 	PORTB = 0;

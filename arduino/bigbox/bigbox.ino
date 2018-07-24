@@ -35,8 +35,9 @@ int inputs[INPUTSIZE] = {P1, P2, P3, P4, P5, P6};
 volatile int pos;
  
  void setup() {
-#ifdef DEBUG
   Serial.begin(115200);
+#ifdef DEBUG
+  
   Serial.println("test\n");
 #endif
   pinMode(SCK, INPUT);
@@ -73,22 +74,33 @@ void loop() {
       }
     // Your data is ready now.
     // Can output to PC
-#ifdef DEBUG
-    Serial.print(data.byte[0]);
-    Serial.println(data.byte[1]);
+
+    Serial.print(data.cd.button1);
+    Serial.print(data.cd.button2);
+    Serial.print(data.cd.button3);
+    Serial.print(data.cd.button4);
+    Serial.print(data.cd.slider1);
+    Serial.print(data.cd.slider2);
+    Serial.println(data.cd.dial1);
     delay(1);
-#endif
+
 }
 
 void getData(int port){
   pos = 0;
   digitalWrite(port, HIGH);
+#ifdef DEBUG
+  Serial.print(port);
+  Serial.println("port high");
+#endif
   int i = 0;
   while (pos < sizestruct){
-      delay(10);
+      int oldposition = pos;
+      delay(90);
       i++;
-      if (pos == 0 || i > sizestruct){ // Timeout on response
-        pos = sizestruct;
+      if (pos == oldposition){ // Timeout on response
+        pos = 0;
+        break;
       }
       
   }
