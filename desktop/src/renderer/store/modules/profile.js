@@ -1,29 +1,26 @@
 const state = {
-    // 0: Button
-    // 1: Switch
-    // 2: Slider
-    // key represents the id
-    // all keys must be carried accross properly in this file
-    // available types:
-    // key-binding
-    // spotify
-    // windows
     profiles: {
       Default: [
-        {uid: 0, bindingType: 'Windows', binding: 'Paste'},
-        {uid: 1, bindingType: 'Key_Binding', binding: 'helloWorld'},
-        {uid: 2, bindingType: undefined, binding: undefined},
-        {uid: 3, bindingType: undefined, binding: undefined},
-        {uid: 4, bindingType: 'Media', binding: 'Mute'},
-        {uid: 5, bindingType: undefined, binding: undefined},
-        {uid: 6, bindingType: 'Spotify', binding: 'Play_Pause'},
-        {uid: 7, bindingType: undefined, binding: undefined},
+        undefined,
+        {uid: 1, bindingType: 'Windows', binding: 'Paste'},
+        {uid: 2, bindingType: 'Text_Binding', binding: 'I Love You'},
+        {uid: 3, bindingType: 'Media', binding: 'Play_Pause'},
+        undefined,
+        {uid: 5, bindingType: 'Windows', binding: 'Switch_Window'},
+        undefined,
+        undefined,
+        {uid: 8, bindingType: 'Media', binding: 'Volume'},
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {uid: 13, bindingType: 'Spotify', binding: 'Volume'},
       ]
     },
 
     settings: {
       Button: {
-        Key_Binding: {
+        Text_Binding: {
         },
         Windows: {
           Copy: {script: 'copy.exe'},
@@ -53,26 +50,12 @@ const state = {
           Cycle_Tabs: {script: 'cycleTabs.exe'},
         }
       },
-      Switch: {
-        Media: {
-          Play_Pause: {script: 'play.exe'},
-          Stop: {script: 'stop.exe'},
-          Next: {script: 'nextTrack.exe'},
-          Previous_Track: {script: 'previousTrack.exe'},
-          Volume_Up: {script: 'volumeUp.exe'},
-          Volume_Down: {script: 'volumeDown.exe'},
-          Mute: {script: 'mute.exe'},
-        },
-      },
       Slider: {
         Spotify: {
-          Play_Pause: {script: 'play.exe'},
-          Stop: {script: 'stop.exe'},
-          Next: {script: 'nextTrack.exe'},
-          Previous_Track: {script: 'previousTrack.exe'},
-          Volume_Up: {script: 'volumeUp.exe'},
-          Volume_Down: {script: 'volumeDown.exe'},
-          Mute: {script: 'mute.exe'},
+          Volume: {script: 'volume.exe'},
+        },
+        Media: {
+          Volume: {script: 'volume.exe'},
         },
       }
     }
@@ -84,19 +67,36 @@ const state = {
     },
     storeGetSettings (state) {
       return state.settings
-    }
+    },
+    storeGetProfile: (state) => (profile, id) => {
+      return state.profiles[profile][id]
+    },
+    // storeGetProfilesNoUn: (state) => (profile) => {
+    //   var profilesNoUn = []
+    //   for (var p in state.profiles) {
+    //     for (var i in state.profiles[p]) {
+    //       if (state.profiles[p][i]) {
+    //         profilesNoUn.push(state.)
+    //       }
+    //     }
+    //   }
+    // }
   }
   
   const mutations = {
-    storeAddProfile (state, payload) {
+    storeCreateNewProfile (state, payload) {
       state.profiles[payload.name] = []
     },
-    storeProfileBind (state, payload) {
+    storeCreateNewProfileDevice (state, payload) {
       state.profiles[payload.name][payload.id] = {}
       state.profiles[payload.name][payload.id].uid = payload.id
       state.profiles[payload.name][payload.id].bindingType = payload.bindingType
       state.profiles[payload.name][payload.id].binding = payload.binding
-    }
+    },
+    storeUpdateProfile (state, payload) {
+      state.profiles[payload.name][payload.id].bindingType = payload.bindingType
+      state.profiles[payload.name][payload.id].binding = payload.binding
+    },
   }
   
   const actions = {

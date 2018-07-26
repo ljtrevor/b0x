@@ -17,7 +17,7 @@
             <h3>New Profile</h3>
           </v-card-title>
           <v-card-text>
-            <v-text-field v-model="newProfile.name" placeholder="name">
+            <v-text-field v-model="newProfile.name" placeholder="New Profile Name">
             </v-text-field>
           </v-card-text>
           <v-card-actions>
@@ -50,7 +50,7 @@
           </v-list-tile>
 
           <v-list-tile
-            v-for="device in devices"
+            v-for="device in devicesNoUn"
             :key="device.uid"
             lazy
           >
@@ -58,20 +58,20 @@
               <v-text-field
                 placeholder="Device ID"
                 disabled
-                v-model="device.uid"
+                v-model="devices[device.uid].uid"
               ></v-text-field>
             </v-flex>
             <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
               <v-text-field
                 placeholder="Device Name"
-                v-model="device.name"
+                v-model="devices[device.uid].name"
                 lazy
               ></v-text-field>
             </v-flex>
             <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
               <v-text-field
                 placeholder="Device Type"
-                v-model="device.type"
+                v-model="devices[device.uid].type"
                 disabled
               ></v-text-field>
             </v-flex>
@@ -81,15 +81,16 @@
                 placeholder="Binding Type"
                 v-model="profiles[selectedProfile][device.uid].bindingType"
                 lazy
+                v-on:change="updateDOM"
               ></v-select>
             </v-flex>
             <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
               <div
-                v-if="profiles[selectedProfile][device.uid].bindingType === 'Key_Binding'"
+                v-if="profiles[selectedProfile][device.uid].bindingType === 'Text_Binding'"
               >
                 <v-text-field
-                  placeholder="Binding"
                   v-model="profiles[selectedProfile][device.uid].binding"
+                  v-on:change="updateDOM"
                   lazy
                 ></v-text-field>
               </div>
@@ -101,6 +102,7 @@
                   placeholder="Binding"
                   v-model="profiles[selectedProfile][device.uid].binding"
                   lazy
+                  v-on:change="updateDOM"
                 ></v-select>
               </div>
               <div
@@ -132,6 +134,7 @@
           },
         },
         devices: undefined,
+        devicesNoUn: undefined,
         values: undefined,
         profiles: undefined,
         settings: undefined,
@@ -153,43 +156,39 @@
     computed: {
       ...mapGetters({
         storeGetDevices: 'storeGetDevices',
-        storeGetValues: 'storeGetValues',
         storeGetProfiles: 'storeGetProfiles',
         storeGetSettings: 'storeGetSettings',
+        storeGetDevicesNoUn: 'storeGetDevicesNoUn',
       }),
     },
 
     methods: {
       ...mapMutations({
-        storeAddProfile: 'storeAddProfile',
-        storeProfileBind: 'storeProfileBind',
-        // storeAddProfileDevice: 'storeAddProfileDevice',
+        storeCreateNewProfile: 'storeCreateNewProfile',
+        storeCreateNewProfileDevice: 'storeCreateNewProfileDevice',
+        storeUpdateProfile: 'storeUpdateProfile',
       }),
 
       updateLocalBindings() {
         this.devices = this.storeGetDevices
-        this.values = this.storeGetValues
+        this.devicesNoUn = this.storeGetDevicesNoUn
         this.profiles = this.storeGetProfiles
         this.settings = this.storeGetSettings
-      },
-
-      discardStoreBindings() {
-        this.devices = this.storeGetDevices
-        this.values = this.storeGetValues
-        this.profiles = this.storeGetProfiles
-        this.settings = this.storeGetSettings
-        this.$forceUpdate()
       },
 
       updateStoreBindings() {
-        for (var p in this.profiles) {
-          for (var id in this.profiles[p]) {
-            var payload = {}
-            payload.name = p
-            payload.id = id
-            payload.bindingType = this.profiles[p][id].bindingType
-            payload.binding = this.profiles[p][id].binding
-            this.storeProfileBind(payload)
+        for (var n in this.profiles) {
+          if (this.profiles[n]) {
+            for (var i in this.profiles[n]) {
+              if (this.profiles[n][i]) {
+                var payload = {}
+                payload.name = n
+                payload.id = this.profiles[n][i].uid
+                payload.bindingType = this.profiles[n][i].bindingType
+                payload.binding = this.profiles[n][i].binding
+                this.storeUpdateProfile(payload)
+              }
+            }
           }
         }
       },
@@ -211,16 +210,22 @@
         this.newProfile.dialog = false
         var payload = {}
         payload.name = this.newProfile.name
-        this.storeAddProfile(payload)
+        this.storeCreateNewProfile(payload)
         for (var id in this.devices) {
-          payload = {}
-          payload.name = this.newProfile.name
-          payload.id = id
-          payload.uid = this.devices[id].uid
-          payload.bindingType = undefined
-          payload.binding = undefined
-          this.storeProfileBind(payload)
+          if (this.devices[id]) {
+            payload = {}
+            payload.name = this.newProfile.name
+            payload.id = this.devices[id].uid
+            payload.uid = this.devices[id].uid
+            payload.bindingType = undefined
+            payload.binding = undefined
+            this.storeCreateNewProfileDevice(payload)
+          }
         }
+      },
+
+      updateDOM () {
+        this.$forceUpdate()
       }
     }
   }
