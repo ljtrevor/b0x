@@ -19,9 +19,9 @@ struct controldata {
   uint8_t button2;
   uint8_t button3;
   uint8_t button4;
-  uint16_t slider1;
-  uint16_t slider2;
-  uint16_t dial1;
+  uint8_t slider1;
+  uint8_t slider2;
+  uint8_t dial1;
 };
 
 union Data {
@@ -82,7 +82,7 @@ void loop() {
     Serial.print(data.cd.slider1);
     Serial.print(data.cd.slider2);
     Serial.println(data.cd.dial1);
-    delay(1);
+    //delay(1);
 
 }
 
@@ -96,7 +96,7 @@ void getData(int port){
   int i = 0;
   while (pos < sizestruct){
       int oldposition = pos;
-      delay(90);
+      delay(80);
       i++;
       if (pos == oldposition){ // Timeout on response
         pos = 0;
