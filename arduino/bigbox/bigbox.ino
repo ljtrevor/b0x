@@ -33,11 +33,11 @@ union Data data;
 int sizestruct = sizeof(struct controldata);
 int inputs[INPUTSIZE] = {P1, P2, P3, P4, P5, P6};
 volatile int pos;
- 
+
  void setup() {
   Serial.begin(115200);
 #ifdef DEBUG
-  
+
   Serial.println("test\n");
 #endif
   pinMode(SCK, INPUT);
@@ -74,14 +74,15 @@ void loop() {
       }
     // Your data is ready now.
     // Can output to PC
-
-    Serial.print(data.cd.button1);
-    Serial.print(data.cd.button2);
-    Serial.print(data.cd.button3);
-    Serial.print(data.cd.button4);
-    Serial.print(data.cd.slider1);
-    Serial.print(data.cd.slider2);
+    Serial.println('$');
+    Serial.println(data.cd.button1);
+    Serial.println(data.cd.button2);
+    Serial.println(data.cd.button3);
+    Serial.println(data.cd.button4);
+    Serial.println(data.cd.slider1);
+    Serial.println(data.cd.slider2);
     Serial.println(data.cd.dial1);
+    
     //delay(1);
 
 }
