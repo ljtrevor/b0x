@@ -5,6 +5,7 @@
         <h3>Connection</h3>
       </v-card-title>
       <v-card-actions>
+        <v-btn color="primary" @click="closeB0x">Disconnect</v-btn>
         <v-text-field v-model="b0x.port" label="b0x Port"></v-text-field>
         <v-btn color="primary"  @click="connectToB0x">Connect</v-btn>
       </v-card-actions>
@@ -56,6 +57,7 @@
           sync: false,
           uid: 0,
         },
+        connection: undefined
       }
     },
     mounted () {
@@ -95,10 +97,10 @@
       connectToB0x () {
         const SerialPort = require('serialport')
         const Readline = require('@serialport/parser-readline')
-        const port = new SerialPort('COM3', {
+        this.connection = new SerialPort('COM3', {
           baudRate: 115200,
         })
-        const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
+        const parser = this.connection.pipe(new Readline({ delimiter: '\r\n' }))
         parser.on('data', this.handleData)
       },
 
@@ -124,7 +126,7 @@
           var settings = this.storeGetSettings
 
           var curDev = {}
-          console.log(this.b0x.uid)
+          // console.log(this.b0x.uid)
           curDev = devices[this.b0x.uid]
           if (curDev.type === 'Button') {
             if (curDev.value * 1 === 1 && curDev.oldValue * 1 === 0) {
@@ -134,7 +136,7 @@
               var script = settings[devices[this.b0x.uid].type][bindingType][binding].script
               console.log('***************** Executing Script')
               console.log(script)
-              // var cpprocess = cp.spawn('./cppFiles/' + script)
+              var cpprocess = cp.spawn('./cppFiles/' + script)
             }
           } else if (curDev.type === 'Slider' || curDev.type === 'Dial') {
             if (curDev.value * 1 !== curDev.oldValue * 1) {
@@ -145,19 +147,11 @@
           }
           this.b0x.uid++
         }
-
-        
-        
-        
       },
 
-      executeBinding (uid) {
-        
+      closeB0x() {
+        this.connection.close()
       },
-
-      doStuff () {
-        var cprocess = cp.spawn('./cppFiles/helloWorld.exe');
-      }
     }
   }
 </script>
