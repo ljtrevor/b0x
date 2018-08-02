@@ -1,16 +1,43 @@
 <template>
-  <v-container>
-    <v-card>
-      <h3>Binding Page</h3>
-      <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
-        <v-select
-          v-if="profiles"
-          :items="Object.keys(profiles)"
-          label="Profile"
-          v-model="selectedProfile"
-        ></v-select>
-      </v-flex>
-      <v-btn @click="newProfileDialogOpen">New Profile</v-btn>
+  <v-container app fluid>
+    <v-card pa-3>
+      <v-card-title>
+        <h3>Bindings</h3>
+      </v-card-title>
+      <v-card-text>
+        <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
+          <v-select
+            v-if="profiles"
+            :items="Object.keys(profiles)"
+            label="Profile"
+            v-model="selectedProfile"
+            v-on:change="storeSelectProfile(selectedProfile)"
+          ></v-select>
+          <!-- <v-btn color="primary" @click="deleteProfileDialogOpen">Delete Profile</v-btn> -->
+          <v-btn color="primary" @click="newProfileDialogOpen">New Profile</v-btn>
+          <v-dialog v-model="deleteProfileDialog">
+            <v-card>
+              <v-card-title><h3>Delete</h3></v-card-title>
+              <v-card-text><h4>Would you like to delete {{ this.storeGetSelectedProfile }}?</h4></v-card-text>
+              <v-card-actions>
+                <v-btn color="primary" @click="deleteProfileDialog=false">Cancel</v-btn>
+                <v-btn color="primary" @click="deleteProfile">Delete</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="cannotDeleteDefault">
+            <v-card>
+              <v-card-title><h3>Delete</h3></v-card-title>
+              <v-card-text><h4>Sorry, but the default profile cannot be deleted.</h4></v-card-text>
+              <v-card-actions>
+                <v-btn color="primary" @click="cannotDeleteDefault=false">Okay</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-flex>
+      </v-card-text>
+      <v-card-actions>
+      </v-card-actions>
       <v-dialog v-model="newProfile.dialog">
         <v-card>
           <v-card-title>
@@ -21,31 +48,31 @@
             </v-text-field>
           </v-card-text>
           <v-card-actions>
-            <v-btn @click="newProfile.dialog=false">Cancel</v-btn>
-            <v-btn @click="createNewProfile">Create</v-btn>
+            <v-btn color="primary" @click="newProfile.dialog=false">Cancel</v-btn>
+            <v-btn color="primary" @click="createNewProfile">Create</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
 
-      <div
+      <v-card
         v-if="selectedProfile"
       >
         <v-list>
           <v-list-tile>
             <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
-              <h3>Device ID</h3>
+              <h4>Device ID</h4>
             </v-flex>
             <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
-              <h3>Device Nickname</h3>
+              <h4>Device Nickname</h4>
             </v-flex>
             <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
-              <h3>Device Type</h3>
+              <h4>Device Type</h4>
             </v-flex>
             <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
-              <h3>Binding Type</h3>
+              <h4>Binding Type</h4>
             </v-flex>
             <v-flex xs12 sm6 md4 lg3 xl2 pa-3>
-              <h3>Binding Function</h3>
+              <h4>Binding Function</h4>
             </v-flex>
           </v-list-tile>
 
@@ -115,9 +142,13 @@
               </div>
             </v-flex>
           </v-list-tile>
-          <v-btn @click="updateStoreBindings()">Update Changes</v-btn>
+          <v-card-actions>
+            <v-btn color="primary" @click="updateStoreBindings()">Update Changes</v-btn>
+          </v-card-actions>
         </v-list>
-      </div>
+      </v-card>
+
+
     </v-card>
   </v-container>
 </template>
@@ -141,7 +172,8 @@
         selectedProfile: undefined,
         selectedBindingType: undefined,
         selectedBinding: undefined,
-
+        deleteProfileDialog: false,
+        cannotDeleteDefault: false,
         newProfile: {
           dialog: false,
           name: undefined,
@@ -159,6 +191,7 @@
         storeGetProfiles: 'storeGetProfiles',
         storeGetSettings: 'storeGetSettings',
         storeGetDevicesNoUn: 'storeGetDevicesNoUn',
+        storeGetSelectedProfile: 'storeGetSelectedProfile',
       }),
     },
 
@@ -167,6 +200,7 @@
         storeCreateNewProfile: 'storeCreateNewProfile',
         storeCreateNewProfileDevice: 'storeCreateNewProfileDevice',
         storeUpdateProfile: 'storeUpdateProfile',
+        storeSelectProfile: 'storeSelectProfile',
       }),
 
       updateLocalBindings() {
@@ -226,10 +260,24 @@
 
       updateDOM () {
         this.$forceUpdate()
+      },
+
+      deleteProfileDialogOpen () {
+        if (this.selectedProfile !== 'Default') {
+          this.deleteProfileDialog = true
+        } else {
+          this.cannotDeleteDefault = true
+        }
+      },
+
+      deleteProfile () {
+        this.deleteProfileDialog = false
+        this.storeDeleteProfile
       }
     }
   }
 </script>
 
 <style>
+  @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons');
 </style>

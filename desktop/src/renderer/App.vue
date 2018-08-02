@@ -1,65 +1,53 @@
 <template>
-  <div>
-    <v-app dark id="home">
-      <h4>Hello, This is the home page</h4>
-      <v-btn v-on:click="page.bindings=true">Bindings</v-btn>
-      <v-btn v-on:click="doStuff()">Read</v-btn>
-      <bindings v-if="page.bindings"></bindings>
-    </v-app>
-  </div>
+  <v-app dark id="home">
+    <v-toolbar>
+      <v-toolbar-title>
+        <h1>b0x</h1>
+      </v-toolbar-title>
+      <v-spacer>
+      </v-spacer>
+      <v-btn flat @click="minimize"><v-icon>minimize</v-icon></v-btn>
+      <v-btn flat @click="maximize"><v-icon>maximize</v-icon></v-btn>
+      <v-btn flat @click="close"><v-icon>close</v-icon></v-btn>
+    </v-toolbar>
+    <BOXBOYS v-if="boxBoys.show"></BOXBOYS>
+    <BINDINGS v-if="bindings.show"></BINDINGS>
+  </v-app>
 </template>
 
 <script>
   import Bindings from './components/Bindings.vue'
-  import * as SerialPort from 'serialport'
-  // var fs = require('fs');
-  var cp = require('child_process');
+  import BoxBoys from './components/BoxBoys.vue'
 
   export default {
-    name: 'b0x_home',
     components: {
-      'bindings': Bindings
+      'BINDINGS': Bindings,
+      'BOXBOYS': BoxBoys,
     },
     data () {
       return {
-        page: {
-          bindings: false
+        bindings: {
+          show: true,
         },
-        repeat: undefined
+        boxBoys: {
+          show: true,
+        },
       }
     },
     computed: {
 
     },
     methods: {
-      doStuff () {
-        var cprocess = cp.spawn('./cppFiles/helloWorld.exe');
-
-      // fs.readFile('inputfilename',function (err, data){
-      //   if(err) throw err;
-
-      //   //redirect standard input from inputfile
-      //   cprocess.stdin.write(data);
-
-      //   //end of standard input
-      //   cprocess.stdin.end(function(){
-      //       console.log('end of stdin');
-      //   });
-
-      //   //listen on your cprocess closing 
-      //   cprocess.on('close',function (code){
-      //       console.log('ps process exited with code ' + code);
-      //     });
-      //   });
-        // var sp = new SerialPort('COM3')
-        // console.log(sp)
-        // console.log(sp.read())
-        // setInterval(function () {
-        //   console.log(sp.read())
-        // }, 1000)
-
+      minimize () {
+        console.log('to be implemented')
+      },
+      maximize () {
+        console.log('to be implemented')
+      },
+      close () {
+        console.log('to be implemented')
       }
-    }
+    },
   }
 </script>
 

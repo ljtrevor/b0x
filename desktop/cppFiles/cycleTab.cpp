@@ -2,11 +2,6 @@
 #include <windows.h>
 
 int main() {
-    std::cout << "typing Hello World\n";
-    Sleep(5000);
-    std::cout << "Done sleeping\n";
-
-
     INPUT ctrlV [4];
     ZeroMemory(ctrlV, sizeof ctrlV);
 
@@ -14,10 +9,10 @@ int main() {
     ctrlV [0].ki.wVk = VK_LCONTROL;
 
     ctrlV [1].type = INPUT_KEYBOARD;
-    ctrlV [1].ki.wVk = 'V'; //assuming ASCII
+    ctrlV [1].ki.wVk = 'VK_NEXT'; //assuming ASCII
 
     ctrlV [2].type = INPUT_KEYBOARD;
-    ctrlV [2].ki.wVk = 'V'; //assuming ASCII
+    ctrlV [2].ki.wVk = 'VK_NEXT'; //assuming ASCII
     ctrlV [2].ki.dwFlags = KEYEVENTF_KEYUP;
 
     ctrlV [3].type = INPUT_KEYBOARD;

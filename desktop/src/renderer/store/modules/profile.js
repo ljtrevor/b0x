@@ -1,34 +1,37 @@
 const state = {
+    selectedProfile: 'Default',
     profiles: {
       Default: [
-        undefined,
-        {uid: 1, bindingType: 'Windows', binding: 'Paste'},
-        {uid: 2, bindingType: 'Text_Binding', binding: 'I Love You'},
-        {uid: 3, bindingType: 'Media', binding: 'Play_Pause'},
-        undefined,
-        {uid: 5, bindingType: 'Windows', binding: 'Switch_Window'},
-        undefined,
-        undefined,
-        {uid: 8, bindingType: 'Media', binding: 'Volume'},
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        {uid: 13, bindingType: 'Spotify', binding: 'Volume'},
+        {uid: 0, bindingType: 'Windows', binding: 'Paste'},
+        {uid: 1, bindingType: 'Text_Binding', binding: 'I Love You'},
+        {uid: 2, bindingType: 'Media', binding: 'Play_Pause'},
+        {uid: 3, bindingType: 'Windows', binding: 'Switch_Window'},
+        {uid: 4, bindingType: 'Media', binding: 'Volume'},
+        {uid: 5, bindingType: 'Spotify', binding: 'Volume'},
+        {uid: 6, bindingType: 'Spotify', binding: 'Volume'},
       ]
     },
 
     settings: {
       Button: {
         Text_Binding: {
+          Text_Binding: {script: 'textBinding.exe'}
         },
         Windows: {
           Copy: {script: 'copy.exe'},
           Paste: {script: 'paste.exe'},
-          Switch_Window: {script: 'switchWindow.exe'}
+          Switch_Window: {script: 'switchWindow.exe'},
+        },
+        Browser: {
+          New_Tab: {script: 'newTab.exe'},
+          Close_Tab: {script: 'closeTab.exe'},
+          Cycle_Tabs: {script: 'cycleTab.exe'},
+          Next_Tab: {script: 'nextTab.exe'},
+          Previous_Tab: {script: 'previousTab.exe'},
+          Refresh: {script: 'refresh.exe'}
         },
         Media: {
-          Play_Pause: {script: 'play.exe'},
+          Play_Pause: {script: 'playPause.exe'},
           Stop: {script: 'stop.exe'},
           Next: {script: 'nextTrack.exe'},
           Previous_Track: {script: 'previousTrack.exe'},
@@ -37,7 +40,7 @@ const state = {
           Mute: {script: 'mute.exe'},
         },
         Spotify: {
-          Play_Pause: {script: 'play.exe'},
+          Play_Pause: {script: 'playPause.exe'},
           Stop: {script: 'stop.exe'},
           Next: {script: 'nextTrack.exe'},
           Previous_Track: {script: 'previousTrack.exe'},
@@ -45,12 +48,16 @@ const state = {
           Volume_Down: {script: 'volumeDown.exe'},
           Mute: {script: 'mute.exe'},
         },
-        Browser: {
-          New_Tab: {script: 'newTab.exe'},
-          Cycle_Tabs: {script: 'cycleTabs.exe'},
-        }
       },
       Slider: {
+        Spotify: {
+          Volume: {script: 'volume.exe'},
+        },
+        Media: {
+          Volume: {script: 'volume.exe'},
+        },
+      },
+      Dial: {
         Spotify: {
           Volume: {script: 'volume.exe'},
         },
@@ -70,6 +77,9 @@ const state = {
     },
     storeGetProfile: (state) => (profile, id) => {
       return state.profiles[profile][id]
+    },
+    storeGetSelectedProfile (state) {
+      return state.selectedProfile
     },
     // storeGetProfilesNoUn: (state) => (profile) => {
     //   var profilesNoUn = []
@@ -97,6 +107,9 @@ const state = {
       state.profiles[payload.name][payload.id].bindingType = payload.bindingType
       state.profiles[payload.name][payload.id].binding = payload.binding
     },
+    storeSelectProfile (state, payload) {
+      state.selectedProfile = payload
+    }
   }
   
   const actions = {

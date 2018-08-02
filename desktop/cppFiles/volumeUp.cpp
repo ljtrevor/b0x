@@ -6,10 +6,10 @@ int main() {
     ZeroMemory(ctrlV, sizeof ctrlV);
 
     ctrlV [0].type = INPUT_KEYBOARD;
-    ctrlV [0].ki.wVk = VK_VOLUME_MUTE;
+    ctrlV [0].ki.wVk = VK_VOLUME_UP;
 
     ctrlV [1].type = INPUT_KEYBOARD;
-    ctrlV [1].ki.wVk = VK_VOLUME_MUTE;
+    ctrlV [1].ki.wVk = VK_VOLUME_UP;
     ctrlV [1].ki.dwFlags = KEYEVENTF_KEYUP;
 
     SendInput (2, ctrlV, sizeof (INPUT));
