@@ -19,9 +19,9 @@ struct controldata {
   uint8_t button2;
   uint8_t button3;
   uint8_t button4;
-  uint16_t slider1;
-  uint16_t slider2;
-  uint16_t dial1;
+  uint8_t slider1;
+  uint8_t slider2;
+  uint8_t dial1;
 };
 
 union Data {
@@ -33,11 +33,11 @@ union Data data;
 int sizestruct = sizeof(struct controldata);
 int inputs[INPUTSIZE] = {P1, P2, P3, P4, P5, P6};
 volatile int pos;
- 
+
  void setup() {
   Serial.begin(115200);
 #ifdef DEBUG
-  
+
   Serial.println("test\n");
 #endif
   pinMode(SCK, INPUT);
@@ -74,15 +74,16 @@ void loop() {
       }
     // Your data is ready now.
     // Can output to PC
-
-    Serial.print(data.cd.button1);
-    Serial.print(data.cd.button2);
-    Serial.print(data.cd.button3);
-    Serial.print(data.cd.button4);
-    Serial.print(data.cd.slider1);
-    Serial.print(data.cd.slider2);
+    Serial.println('$');
+    Serial.println(data.cd.button1);
+    Serial.println(data.cd.button2);
+    Serial.println(data.cd.button3);
+    Serial.println(data.cd.button4);
+    Serial.println(data.cd.slider1);
+    Serial.println(data.cd.slider2);
     Serial.println(data.cd.dial1);
-    delay(1);
+    
+    //delay(1);
 
 }
 
@@ -96,7 +97,7 @@ void getData(int port){
   int i = 0;
   while (pos < sizestruct){
       int oldposition = pos;
-      delay(90);
+      delay(80);
       i++;
       if (pos == oldposition){ // Timeout on response
         pos = 0;
