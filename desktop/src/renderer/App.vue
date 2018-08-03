@@ -6,9 +6,9 @@
       </v-toolbar-title>
       <v-spacer>
       </v-spacer>
-      <v-btn flat @click="minimize"><v-icon>minimize</v-icon></v-btn>
-      <v-btn flat @click="maximize"><v-icon>maximize</v-icon></v-btn>
-      <v-btn flat @click="close"><v-icon>close</v-icon></v-btn>
+      <!-- <v-btn icon flat @click="minimize"><v-icon>minimize</v-icon></v-btn>
+      <v-btn icon flat @click="maximize"><v-icon>maximize</v-icon></v-btn>
+      <v-btn icon flat @click="close"><v-icon>close</v-icon></v-btn> -->
     </v-toolbar>
     <BOXBOYS v-if="boxBoys.show"></BOXBOYS>
     <BINDINGS v-if="bindings.show"></BINDINGS>
@@ -39,9 +39,11 @@
     },
     methods: {
       minimize () {
+        this.window.minimize()
         console.log('to be implemented')
       },
       maximize () {
+        this.$
         console.log('to be implemented')
       },
       close () {

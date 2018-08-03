@@ -6,7 +6,7 @@
       </v-card-title>
       <v-card-actions>
         <v-btn color="primary" @click="closeB0x">Disconnect</v-btn>
-        <v-text-field v-model="b0x.port" label="b0x Port"></v-text-field>
+        <v-text-field v-model="b0x.port" label="b0x Hole"></v-text-field>
         <v-btn color="primary"  @click="connectToB0x">Connect</v-btn>
       </v-card-actions>
       <v-card-text>
@@ -48,7 +48,7 @@
     data () {
       return {
         b0x: {
-          port: 'COM3',
+          port: 'COM4',
           status: 0,
           sleepTimer: undefined,
           inactiveTimer: undefined,
@@ -62,7 +62,7 @@
     },
     mounted () {
       this.updateLocalData()
-      // this.connectToB0x()
+      this.connectToB0x
     },
     computed: {
       ...mapGetters({
@@ -97,7 +97,7 @@
       connectToB0x () {
         const SerialPort = require('serialport')
         const Readline = require('@serialport/parser-readline')
-        this.connection = new SerialPort('COM3', {
+        this.connection = new SerialPort(this.b0x.port, {
           baudRate: 115200,
         })
         const parser = this.connection.pipe(new Readline({ delimiter: '\r\n' }))
@@ -120,13 +120,13 @@
           payload.id = this.b0x.uid
           payload.value = data * 1
           this.storeDevice(payload)
-
+          // console.log('uid' + this.b0x.uid)
+          // console.log(data)
           var devices = this.storeGetDevices
           var profile = this.storeGetProfiles
           var settings = this.storeGetSettings
 
           var curDev = {}
-          // console.log(this.b0x.uid)
           curDev = devices[this.b0x.uid]
           if (curDev.type === 'Button') {
             if (curDev.value * 1 === 1 && curDev.oldValue * 1 === 0) {
@@ -136,13 +136,24 @@
               var script = settings[devices[this.b0x.uid].type][bindingType][binding].script
               console.log('***************** Executing Script')
               console.log(script)
-              var cpprocess = cp.spawn('./cppFiles/' + script)
+              var cpprocess = cp.spawn('./cppFiles/' + script, [binding])
             }
           } else if (curDev.type === 'Slider' || curDev.type === 'Dial') {
             if (curDev.value * 1 !== curDev.oldValue * 1) {
-              // var oldV = curDev.oldValue * 100 / 255
-              // var newV = curDev.newValue * 100 / 255
-              // console.log('EXECUTING BINDING')
+              if (curDev.oldValue === undefined) {
+              } else {
+                var oldV = curDev.oldValue * 100 / 255
+                var newV = curDev.value * 100 / 255
+                var selectedProfile = this.storeGetSelectedProfile
+                var bindingType = profile[selectedProfile][this.b0x.uid].bindingType
+                var binding = profile[selectedProfile][this.b0x.uid].binding
+                var script = settings[devices[this.b0x.uid].type][bindingType][binding].script
+                console.log('***************** Executing Script')
+                console.log(script)
+                console.log(oldV)
+                console.log(newV)
+                var cpprocess = cp.spawn('./cppFiles/' + script, [oldV, newV])
+              }
             }
           }
           this.b0x.uid++
@@ -151,6 +162,7 @@
 
       closeB0x() {
         this.connection.close()
+        this.b0x.status = 0
       },
     }
   }
